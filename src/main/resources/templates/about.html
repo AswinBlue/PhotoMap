@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Photos on Map</title>
+    <script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+    <script src="photo.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoRrxqX8mHU2ehG0P4RPQr3h-qxVrMzWc&callback=initMap" async defer></script>
+
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #facebook {
+            height : 0%;
+        }
+        #map {
+            height: 88%;
+            width: 98%;
+            left: 1%;
+            top: 2.5%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            min-height: 50%;
+            overflow: auto;
+        }
+    </style>
+    <!-- Maps ------------------------------------------------------------------------------------------------------------->
+
+
+
+</head>
+<body>
+<link rel="stylesheet" href="photo.css">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">PhotoMap</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation" style="">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor03">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Map <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Saved Photos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            <button type="button" class="btn btn-success">Save Photos</button>
+        </form>
+    </div>
+</nav>
+<div id="map"/>
+</body>
+</html>

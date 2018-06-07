@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+    <context-param>  <!-- 이녀석은 루트 컨텍스트로 모든 서블릿과 필터들이 공유한다고 합니다. 바로 root-context.xml을 정의해 두었네요-->
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/spring/root-context.xml</param-value>
+    </context-param>
+
+    <!-- Creates the Spring Container shared by all Servlets and Filters -->
+    <listener> <!-- 이녀석은 말그대로 listenerd이구요 루트 컨텍스터에 정의되어 있는 것들을 모든 서블릿과 필터가 공유할 수 있게 해준다네요.-->
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- Processes application requests -->
+    <servlet> <!-- 요놈은 말그대로 서블릿이다. 서블릿이 뭐냐고 질문을 한다면.. 음 jsp를 좀더 공부하고 오길..-->
+        <servlet-name>appServlet</servlet-name> <!--서블릿중 DispatcherServlet이구요. 이 서블릿이 공유할수 있는 것들은 servlet-context에 정의를 할겁니다.-->
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> <!-- 요 서블릿이 앞단에서 요청정보를 핸들링해주는 서블입니다.-->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping> <!-- appServlet에 대한 url-pattern을 정의해 두었네요~-->
+        <servlet-name>appServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>

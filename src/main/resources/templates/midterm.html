@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PhotoMap</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #facebook {
+        height: 30%;
+      }
+      #map {
+        height: 80%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+
+      html, body {
+        height: 99%;
+        margin: 0;
+        padding: 10;
+        border: 1px solid gold;
+        min-height: 50%;
+        overflow: auto;
+      }
+    </style>
+
+    <!-- For jquery -->
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+    //init facebook API
+      window.fbAsyncInit = function() {
+        FB.init({
+            appId            : '381421658930345',
+            autoLogAppEvents : true,
+            status     : true,
+			cookie     : true,
+            xfbml            : true,
+            version          : 'v2.8'
+        });
+        facebookReady.resolve();
+
+        //check Login status
+         FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+         });
+      };
+
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <!--functions-->
+    <script>
+      function FB_login() {
+        FB.login(function(response) {
+            if (response.authResponse) {
+             console.log('Welcome!  Fetching your information.... ');
+             FB.api('/me', function(response) {
+               console.log('Good to see you, ' + response.name + '.');
+             });
+            } else {
+             console.log('User cancelled login or did not fully authorize.');
+            }
+        });
+      }
+
+      function FB_share(){
+          FB.ui(
+              {
+                method: 'share',
+                href: 'http://Photomap.dev/',
+              },
+              // callback
+              function(response) {
+              }
+        );
+      }
+      function FB_like(){
+              FB.ui({
+          method: 'share_open_graph',
+          action_type: 'og.likes',
+          action_properties: JSON.stringify({
+            object:'http://Photomap.dev/',
+          })
+        }, function(response){
+          // Debug response (optional)
+          console.log(response);
+        });
+      }
+
+
+      function makeFacebookPhotoURL( id, accessToken ) {
+          return 'https://graph.facebook.com/' + id + '/picture?access_token=' + accessToken;
+      }
+      function login( callback ) {
+			FB.login(function(response) {
+				if (response.authResponse) {
+					//console.log('Welcome!  Fetching your information.... ');
+					if (callback) {
+						callback(response);
+					}
+				} else {
+					console.log('User cancelled login or did not fully authorize.');
+				}
+			},{scope: 'user_photos'} );
+	   }
+      function getAlbum(){
+        console.log("retrieving the albums");
+        FB.api('/me/albums',{fields: 'id,cover_photo'},
+					function(albumResponse) {
+						console.log( ' access to albums ' );
+						if (callback) {
+							callback(albumResponse);
+						}
+					}
+			    );
+            return true;
+      }
+      function getPhotosForAlbumId( albumId, callback ) {
+			FB.api(
+					'/'+albumId+'/photos',
+					{fields: 'id'},
+					function(albumPhotosResponse) {
+						//console.log( ' got photos for album ' + albumId );
+						if (callback) {
+							callback( albumId, albumPhotosResponse );
+						}
+					}
+				);
+		}
+		function getLikesForPhotoId( photoId, callback ) {
+			FB.api(
+					'/'+albumId+'/photos/'+photoId+'/likes',
+					{},
+					function(photoLikesResponse) {
+						if (callback) {
+							callback( photoId, photoLikesResponse );
+						}
+					}
+				);
+		}
+		function getPhotos(callback) {
+			var allPhotos = [];
+			var accessToken = '';
+			login(function(loginResponse) {
+					accessToken = loginResponse.authResponse.accessToken || '';
+					getAlbums(function(albumResponse) {
+							var i, album, deferreds = {}, listOfDeferreds = [];
+							for (i = 0; i < albumResponse.data.length; i++) {
+								album = albumResponse.data[i];
+								deferreds[album.id] = $.Deferred();
+								listOfDeferreds.push( deferreds[album.id] );
+								getPhotosForAlbumId( album.id, function( albumId, albumPhotosResponse ) {
+										var i, facebookPhoto;
+										for (i = 0; i < albumPhotosResponse.data.length; i++) {
+											facebookPhoto = albumPhotosResponse.data[i];
+											allPhotos.push({
+												'id'	:	facebookPhoto.id,
+												'added'	:	facebookPhoto.created_time,
+												'url'	:	makeFacebookPhotoURL( facebookPhoto.id, accessToken )
+											});
+										}
+										deferreds[albumId].resolve();
+									});
+							}
+							$.when.apply($, listOfDeferreds ).then( function() {
+								if (callback) {
+									callback( allPhotos );
+								}
+							}, function( error ) {
+								if (callback) {
+									callback( allPhotos, error );
+								}
+							});
+						});
+				});
+		}
+    </script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = 'https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v2.12&appId=381421658930345&autoLogAppEvents=1';
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <script>
+		/**
+		 * This is the bootstrap / app script
+		 */
+		// wait for DOM and facebook auth
+		var docReady = $.Deferred();
+		var facebookReady = $.Deferred();
+		$(document).ready(docReady.resolve);
+
+		$.when(docReady, facebookReady).then(function() {
+			if (typeof getPhotos !== 'undefined') {
+				getPhotos( function( photos ) {
+					console.log( photos );
+				});
+			}
+		});
+		// call facebook script
+		(function(d){
+		 var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+		 js = d.createElement('script'); js.id = id; js.async = true;
+		 js.src = "http://connect.facebook.net/en_US/all.js";
+		 d.getElementsByTagName('head')[0].appendChild(js);
+		}(document));
+	</script>
+</head>
+<body>
+    <div id="facebook">
+        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+        <button type = "button" onclick = "FB_share()">share in facebook</button>
+        <button type = "button" onclick = "FB_like()">like it</button>
+        <button type = "button" onclick = "FB_login()">login</button>
+        <button type = "button" onclick = "FB_getAlbum()">album</button>
+        <div id="photos">
+            <img id=img1;src=""/>
+        </div>
+    </div>
+    <div id="map"/>
+    <!--map-->
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 37.565288, lng: 126.989481},
+          zoom: 5
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoRrxqX8mHU2ehG0P4RPQr3h-qxVrMzWc&callback=initMap" async defer></script>
+
+<!--facebook-->
+
+
+</body>
+</html>
