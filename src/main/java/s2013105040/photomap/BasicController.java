@@ -13,6 +13,7 @@ import com.flickr4java.flickr.photosets.Photosets;
 import com.flickr4java.flickr.photosets.PhotosetsInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,52 +37,65 @@ public class BasicController {
 		return "photo";
 	}
 */
-    ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
-    PhotosLoaded photoLoaded = ctx.getBean(PhotosLoaded.class);
-    FlickrLoader flickrLoader = ctx.getBean(FlickrLoader.class);
-
     private ObjectMapper mapper = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(BasicController.class);
+
+    @Autowired
+    FlickrLoader flickrLoader;
+
+    @Autowired
+    private PhotoRepository photoRepository;
 
     @RequestMapping("/")
     public ModelAndView index(ModelMap model) {
         ModelAndView view = new ModelAndView("photo");
         //view.setViewName("photo");
 
+/*
+        Iterable<PhotoInfo> photoLoaded = photoRepository.findAll();
+
         if (photoLoaded != null) {
             try {
-                model.addAttribute("photos", mapper.writeValueAsString(photoLoaded));
+                String jsonString = mapper.writeValueAsString(photoLoaded);
+                model.addAttribute("photos", jsonString);
 
-                log.info("loaded photos : " + mapper.writeValueAsString(photoLoaded));
+                log.info("loaded photos : " + jsonString);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
+*/
         //view.addObject("photos",photoLoaded);
         return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/get", method = RequestMethod.GET, produces="application/json")
+    public Object get() {
+        String jsonString = null;
+        Iterable<PhotoInfo> photoLoaded = photoRepository.findAll();
+        try {
+           jsonString = mapper.writeValueAsString(photoLoaded);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
     }
 
     @RequestMapping("/saved")
     public ModelAndView saved() {
         ModelAndView view = new ModelAndView();
         view.setViewName("saved");
-        view.addObject("name", "IMAGE_NAME");
 
         return view;
-    }
-
-    @RequestMapping("/save")
-    public boolean savePhotos(PhotoRepository repository) {
-
-        //repository.save();
-        return true;
     }
 
     @RequestMapping("/login")
     public ModelAndView login() {
         ModelAndView view = new ModelAndView();
         view.setViewName("login");
-        view.addObject("name", "IMAGE_NAME");
+        String url = flickrLoader.presetToken();
+        view.addObject("url", url);
 
         return view;
     }
@@ -90,8 +104,6 @@ public class BasicController {
     @RequestMapping(value = "/load/FB", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public Object loadFBPhotos(@RequestBody List<FacebookForm> data) {
-        photoLoaded.setPhotos(new ArrayList<PhotoInfo>());
-
         for (FacebookForm i : data) {
             System.out.printf("photo : " + i.toString());
 
@@ -103,7 +115,7 @@ public class BasicController {
             photo.setTime(i.time);
             photo.setLat(i.lat);
             photo.setLng(i.lng);
-            photoLoaded.getPhotos().add(photo);
+            photoRepository.save(photo);
         }
 /*
         //System.out.printf("data: " + data.toString());
@@ -139,13 +151,27 @@ public class BasicController {
 */
 //////////
         Map<String,Integer> result= new HashMap<String, Integer>();
-        result.put("result",photoLoaded.getPhotos().size());
+        result.put("result",data.size());
         return result;
     }
 
-    @RequestMapping(value = "/load/Flickr", method = RequestMethod.GET)
-    public Object loadFlickrPhotos() {
-        flickrLoader.loadImages();
+    @ResponseBody
+    @RequestMapping(value = "/load/Flickr", method = RequestMethod.POST)
+    public String loadFlickrPhotos(@RequestBody String data) {
+        //remove postfix '='
+        String token = data.substring(0,data.length()-1);
+
+        try {
+            ArrayList<PhotoInfo> result = flickrLoader.loadImages(token);
+            for(PhotoInfo i : result){
+                photoRepository.save(i);
+            }
+        } catch (FlickrException e) {
+            e.printStackTrace();
+            return "fail";
+        }
+        return "success";
+    }
 
 /*
         PhotoList<Photo> photos;
@@ -170,15 +196,12 @@ public class BasicController {
             e.printStackTrace();
         }
         */
-        return null;
-    }
 
 
     @RequestMapping("/about")
     public ModelAndView about() {
         ModelAndView view = new ModelAndView();
         view.setViewName("about");
-        view.addObject("name", "IMAGE_NAME");
 
         return view;
     }

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Photos on Map</title>
     <script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
-    <script src="photo.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoRrxqX8mHU2ehG0P4RPQr3h-qxVrMzWc&callback=initMap" async defer></script>
+    <script th:src="photo.js"></script>
 
     <style>
         /* Always set the map height explicitly to define the size of the div
@@ -41,22 +41,21 @@
     <div class="collapse navbar-collapse" id="navbarColor03">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Map <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Map <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="saved">Saved Photos</a>
+                <a class="nav-link" href="/saved">Saved Photos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="login">Account</a>
+                <a class="nav-link" href="/login">Account</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="about">About</a>
+                <a class="nav-link" href="/about">About</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="text" placeholder="Search">
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            <button type="button" class="btn btn-success">Save Photos</button>
         </form>
     </div>
 </nav>

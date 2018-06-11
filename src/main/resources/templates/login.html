@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Photos on Map</title>
     <script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
     <script src="login.js"></script>
@@ -11,7 +11,7 @@
         .fa {
           padding: 20px;
           font-size: 30px;
-          width: 130px;
+          width: 75px;
           text-align: center;
           text-decoration: none;
           margin: 5px 2px;
@@ -26,43 +26,66 @@
           background: #3B5998;
           color: white;
         }
+        .fa-flickr {
+          background: #f40083;
+          color: white;
+        }
+
     </style>
 </head>
 <body>
-    <link rel="stylesheet" href="photo.css">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">PhotoMap</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation" style="">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<link rel="stylesheet" href="photo.css">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">PhotoMap</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03"
+            aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation" style="">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse" id="navbarColor03">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/">Map <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Saved Photos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="login">Account</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="about">About</a>
-                </li>
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                <button type="button" class="btn btn-success">Save Photos</button>
-            </form>
-        </div>
-    </nav>
+    <div class="collapse navbar-collapse" id="navbarColor03">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Map </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/saved">Saved Photos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Account <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-    <button class="fa fa-facebook" id="fb_login"></button>
-    <br>
-    <button class="fa fa-flickr" id="fk_login"></button>
-
+<table>
+    <tr>
+        <td style="padding:20px">
+            <button class="fa fa-facebook" id="fb_login"></button>
+            <br><br>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding:20px">
+            <div class="form-group row">
+                <label for="url">다음 링크에서 token을 받아 입력하세요</label>
+                    <a th:href="${url}" type="text" readonly="" class="form-control-plaintext" id="url" target = "_blank" style="padding:20px">Click Here to Get Token</a>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding:20px">
+            <div class="form-group">
+                <input type="email" class="form-control" id="token" placeholder="Enter token number">
+            </div>
+        </td>
+        <td style="padding:20px">
+            <button class="fa fa-flickr" id="fk_login"></button>
+        </td>
+    </tr>
+</table>
 
 </body>
 </html>

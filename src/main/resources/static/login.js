@@ -85,7 +85,7 @@ function makeFacebookPhotoURL( id, accessToken ) {
                                     var obj = new Object();
                                     obj.URL = makeFacebookPhotoURL( photo.id, accessToken );
                                     obj.time = placeResponse.created_time;
-                                    obj.from = "facebook"
+                                    obj.from = "Facebook"
                                     obj.title = placeResponse.name;
                                     if(placeResponse.place){
                                         obj.place = placeResponse.place.name;
@@ -204,24 +204,25 @@ $.ajax({
  });
 */
 ///////////////////////////////////////////////////////////////////////////////
+
 getFlickrPhotos = function(){
    var xhr = new XMLHttpRequest();
-   xhr.open('GET', '/load/Flickr', true);
+   xhr.open('POST', '/load/Flickr', true);
    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
    xhr.onload = function () {
        // do something to response
-       console.log(this.responseText);
+       alert(this.responseText);
    };
    xhr.error = function(request,status,error){
         alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-        return false;
     }
-   xhr.send(null);
-   //xhr.send('user=person&pwd=password&organization=place&requiredkey=key');
+    xhr.send(document.getElementById("token").value);
+      //xhr.send('user=person&pwd=password&organization=place&requiredkey=key');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 window.onload = function(){
     document.getElementById ("fb_login").addEventListener ("click", getUserPhotos, false);
     document.getElementById ("fk_login").addEventListener ("click", getFlickrPhotos, false);
+
 }

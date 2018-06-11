@@ -1,5 +1,6 @@
 package s2013105040.photomap;
 
+import jdk.internal.org.objectweb.asm.Handle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,8 +12,8 @@ public class AppConfig {
         return new FlickrLoader();
     }
     @Bean
-    PhotosLoaded photosLoaded(){
-        return new PhotosLoaded();
+    HandleDatabase handleDatabase(){
+        return new HandleDatabase();
     }
 
 }

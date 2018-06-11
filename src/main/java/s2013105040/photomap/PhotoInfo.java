@@ -1,63 +1,45 @@
 package s2013105040.photomap;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PhotoInfo {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String URL;
     @Column
     private String time;
     @Column
     private String title;
     @Column
-    private String URL;
-    @Column
     private String content;
     @Column
-    private String album;
-    @Column
-    private String from;
+    private String source;
     @Column
     private String place;
     @Column
-    private int height;
+    private double lat;
     @Column
-    private int width;
+    private double lng;
     @Column
-    private float lat;
-    @Column
-    private float lng;
+    private String postURL;
 
-
-    public PhotoInfo(String URL, String time, String title, String content, String album, int height, int width, float lat, float lng){}
     public PhotoInfo(){}
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setLat(float lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public void setLng(float lng) {
+    public void setLng(double lng) {
         this.lng = lng;
     }
 
@@ -73,40 +55,24 @@ public class PhotoInfo {
         this.URL = URL;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
     public void setFrom(String from) {
-        this.from = from;
+        this.source = from;
     }
 
     public void setPlace(String place) {
         this.place = place;
     }
 
-    public float getLat() {
+    public void setPostURL(String postURL) {
+        this.postURL = postURL;
+    }
+
+    public double getLat() {
         return lat;
     }
 
-    public float getLng() {
+    public double getLng() {
         return lng;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public String getAlbum() {
-        return album;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getContent() {
@@ -114,7 +80,7 @@ public class PhotoInfo {
     }
 
     public String getFrom() {
-        return from;
+        return source;
     }
 
     public String getPlace() {
@@ -131,5 +97,9 @@ public class PhotoInfo {
 
     public String getURL() {
         return URL;
+    }
+
+    public String getPostURL() {
+        return postURL;
     }
 }
