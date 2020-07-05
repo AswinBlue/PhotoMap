@@ -1,4 +1,7 @@
       var map;
+      var infowindows = [];
+      var markers = [];
+
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 37.565288, lng: 126.989481},
@@ -16,10 +19,14 @@
 
 
     function loadPhotos(photos) {
-        var infowindows = [];
-        var markers = [];
 //        var photos = JSON.parse( ${photos} );
+        //clear markers on map
+        markers.forEach(function(v){
+            v.setMap(null);
+        });
 
+        infowindows = [];
+        markers = [];
         for (i = 0; i < photos.length; i++) {
             //must have 'place' and 'place.location'
             if(photos[i].lat != 999 && photos[i].lng != 999){
@@ -69,11 +76,33 @@
             });
         }
         //google.maps.event.addDomListener(window, 'load', initMap);
+    }
 
+    function search(str){
+        var data = document.getElementById("search").value;
+
+        $.ajax({
+                 url: '/search',
+                 type: 'post',
+                 dataType: 'json',
+                 data: String(data),
+                 async: false,
+                 contentType: 'application/json; charset=UTF-8',
+                 success: function (respond) {
+                   //var photos = JSON.parse(respond);
+                    loadPhotos(respond);
+                    alert("Load Success");
+                 },
+                 error: function(request,status,error){
+                     alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                 }
+            });
     }
 ////////////////////////////////////////////////////////////////
 //    getUserPhotos();
 $(window).load(function(){
+    document.getElementById ("searchBtn").addEventListener ("click", search, false);
+
     $.ajax({
          url: '/get',
          type: 'get',

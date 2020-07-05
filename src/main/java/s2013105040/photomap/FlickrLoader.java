@@ -98,18 +98,13 @@ public class FlickrLoader {
     }
 
     public ArrayList<PhotoInfo> loadImages(String tokenKey) throws FlickrException {
-
         ArrayList<PhotoInfo> photoInfoArrayList = new ArrayList<>();
-
         AuthInterface authInterface = flickr.getAuthInterface();
-
         if (requestToken == null)
             requestToken = authInterface.getAccessToken(token, new Verifier(tokenKey));
-
         System.out.println("Authentication success");
 
         Auth auth = authInterface.checkToken(requestToken);
-
         RequestContext requestContext = RequestContext.getRequestContext();
         requestContext.setAuth(auth);
         flickr.setAuth(auth);
@@ -120,7 +115,6 @@ public class FlickrLoader {
         searchParameters.setPrivacyFilter(5);
         searchParameters.setHasGeo(true);
         searchParameters.setAccuracy(1);
-
 
         PhotosInterface photosInterface = flickr.getPhotosInterface();
         PhotoList<Photo> photolist = photosInterface.search(searchParameters, 100, 1);
@@ -139,7 +133,6 @@ public class FlickrLoader {
                     place += " " + photo.getRegion().getName();
                 if (photo.getLocality() != null)
                     place += " " + photo.getLocality().getName();
-
                 photoInfo.setPlace(place);
             } else {
                 photoInfo.setLat(999);
@@ -154,11 +147,8 @@ public class FlickrLoader {
             List<Size> size = new ArrayList(photosInterface.getSizes(i.getId()));
             photoInfo.setURL(size.get(5).getSource());
             photoInfo.setPostURL(photo.getUrl());
-
             photoInfoArrayList.add(photoInfo);
-
         }
-
         return photoInfoArrayList;
     }
 }

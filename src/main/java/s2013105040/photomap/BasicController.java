@@ -1,30 +1,23 @@
 package s2013105040.photomap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
-import com.flickr4java.flickr.REST;
-import com.flickr4java.flickr.photos.Photo;
-import com.flickr4java.flickr.photos.PhotoList;
-import com.flickr4java.flickr.photosets.Photoset;
-import com.flickr4java.flickr.photosets.Photosets;
-import com.flickr4java.flickr.photosets.PhotosetsInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class BasicController {
@@ -76,6 +69,23 @@ public class BasicController {
         Iterable<PhotoInfo> photoLoaded = photoRepository.findAll();
         try {
            jsonString = mapper.writeValueAsString(photoLoaded);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/search", method = RequestMethod.POST, produces="application/json")
+    public Object search(@RequestBody String str) {
+        String jsonString = null;
+        Iterable<PhotoInfo> photoLoaded = new ArrayList<>();
+        ((ArrayList<PhotoInfo>) photoLoaded).addAll(photoRepository.findByContentContaining(str));
+        ((ArrayList<PhotoInfo>) photoLoaded).addAll(photoRepository.findByPlaceContaining(str));
+        ((ArrayList<PhotoInfo>) photoLoaded).addAll(photoRepository.findBySourceContaining(str));
+        ((ArrayList<PhotoInfo>) photoLoaded).addAll(photoRepository.findByTitleContaining(str));
+        try {
+            jsonString = mapper.writeValueAsString(photoLoaded);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

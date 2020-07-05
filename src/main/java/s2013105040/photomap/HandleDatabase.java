@@ -9,7 +9,7 @@ public class HandleDatabase {
 
     //	private static String url = "jdbc:mysql://155.230.118.94:3306";
     private static String url = "jdbc:mysql://localhost:3306";
-    private static String dbName = "photoDB2";
+    private static String dbName = "photoDB";
 
 
     public void createDatabase() {

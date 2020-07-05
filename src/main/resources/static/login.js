@@ -120,9 +120,6 @@ function makeFacebookPhotoURL( id, accessToken ) {
 		}
 
         function getUserPhotos(){
-                /**
-                 * This is the bootstrap / app script
-                 */
                 // wait for DOM and facebook auth
                 var docReady = $.Deferred();
                 var facebookReady = $.Deferred();
@@ -130,7 +127,6 @@ function makeFacebookPhotoURL( id, accessToken ) {
                 window.fbAsyncInit = function() {
                     FB.init({
                       appId      : '381421658930345',
-//         			  channelUrl : '//conor.lavos.local/channel.html',
                       status     : true,
                       cookie     : true,
                       xfbml      : true
@@ -154,8 +150,7 @@ function makeFacebookPhotoURL( id, accessToken ) {
                                         alert("Photo Loaded Successfully");
                                     else
                                         alert("Empty data Loaded");
-
-                                     return true;
+                                        return true;
                                  },
                                  error: function(request,status,error){
                                      alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
